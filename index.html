@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Text Analyzer</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .app-container {
+            background-color: #1e293b;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 650px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 0;
+            color: #38bdf8;
+            font-size: 26px;
+        }
+
+        /* Analytics Stats Layout Bar */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background-color: #334155;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #38bdf8;
+        }
+
+        /* Main Workspace Inputs */
+        textarea {
+            width: 100%;
+            height: 180px;
+            padding: 15px;
+            font-size: 16px;
+            background-color: #334155;
+            border: 2px solid #475569;
+            border-radius: 10px;
+            color: white;
+            box-sizing: border-box;
+            outline: none;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        textarea:focus {
+            border-color: #38bdf8;
+        }
+
+        .utilities {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        button {
+            flex: 1;
+            padding: 10px;
+            font-size: 14px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .clear-btn {
+            background-color: #ef4444;
+            color: white;
+        }
+
+        .clear-btn:hover {
+            background-color: #dc2626;
+        }
+
+        .case-btn {
+            background-color: #475569;
+            color: white;
+        }
+
+        .case-btn:hover {
+            background-color: #64748b;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <h1>📝 Real-Time Text Analyzer</h1>
+        
+        <!-- Live Dashboard Metrics Panel -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Words</div>
+                <div class="stat-value" id="word-count">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Characters</div>
+                <div class="stat-value" id="char-count">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Reading Time</div>
+                <div class="stat-value" id="read-time">0m</div>
+            </div>
+        </div>
+
+        <!-- Target input interface node -->
+        <textarea id="text-input" placeholder="Type or paste your text content here..." oninput="analyzeText()"></textarea>
+
+        <!-- Dynamic utility operations -->
+        <div class="utilities">
+            <button class="case-btn" onclick="convertCase('upper')">🔠 UPPERCASE</button>
+            <button class="case-btn" onclick="convertCase('lower')">🔡 lowercase</button>
+            <button class="clear-btn" onclick="clearText()">🗑️ Clear</button>
+        </div>
+    </div>
+
+    <script>
+        function analyzeText() {
+            const text = document.getElementById('text-input').value;
+            
+            // 1. Calculate raw character length
+            const charCount = text.length;
+            
+            // 2. Use Regular Expressions to strip white spaces and count individual word entities accurately
+            // \s+ matches any chunk of spaces, tabs, or line breaks
+            const cleanedText = text.trim();
+            const wordCount = cleanedText === "" ? 0 : cleanedText.split(/\s+/).length;
+
+            // 3. Compute estimated reading velocity time thresholds (Based on standard average adult speed of 200 words per minute)
+            const readingTimeMinutes = Math.ceil(wordCount / 200);
+
+            // Update DOM element displays instantly
+            document.getElementById('char-count').innerText = charCount;
+            document.getElementById('word-count').innerText = wordCount;
+            document.getElementById('read-time').innerText = `${readingTimeMinutes}m`;
+        }
+
+        function convertCase(mode) {
+            const inputField = document.getElementById('text-input');
+            if (mode === 'upper') {
+                inputField.value = inputField.value.toUpperCase();
+            } else if (mode === 'lower') {
+                inputField.value = inputField.value.toLowerCase();
+            }
+            analyzeText(); // Re-trigger tracking array analysis counters
+        }
+
+        function clearText() {
+            document.getElementById('text-input').value = "";
+            analyzeText();
+        }
+    </script>
+</body>
+</html>
